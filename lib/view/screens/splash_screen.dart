@@ -23,11 +23,10 @@ class _SplashScreenState extends State<SplashScreen> {
     // Constructing the URL and parameters
     String url = 'http://reltrack.vibsugar.com/api/WebAPI/GPS_ValidateIMEI';
     String imei = '6a37b2a4efd8d308';  // Replace with dynamic value if needed
-    String firebaseRegistrationId = 'hngtyaf';  // Replace with dynamic value if needed
 
     // Constructing query parameters
     Map<String, dynamic> queryParams = {
-      'IMEINO': imei
+      'IMEI': imei
     };
 
     // Setting headers
