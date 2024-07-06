@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:reliance_sugar_tracking/utils/other/jsonExtract.dart';
+
+import '../../model/response/UserData.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -20,36 +23,46 @@ class _SplashScreenState extends State<SplashScreen> {
   void getValidateImei() async {
     Dio dio = Dio();
 
-    // Constructing the URL and parameters
+    // Constructing the URL
     String url = 'http://reltrack.vibsugar.com/api/WebAPI/GPS_ValidateIMEI';
-    String imei = '6a37b2a4efd8d308';  // Replace with dynamic value if needed
 
-    // Constructing query parameters
-    Map<String, dynamic> queryParams = {
-      'IMEI': imei
+    // Constructing the body parameters
+    String imei = '6a37b2a4efd8d308';  // Replace with dynamic value if needed
+    Map<String, dynamic> bodyParams = {
+      'IMEI': imei,
     };
 
     // Setting headers
     Options options = Options(
       headers: {
-        'X-ApiKey': 'LsTrackingVib@1234',
-        'Authorization': 'Basic ' + base64Encode(utf8.encode('LsDemo@45:LsAdmin@123')),
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
     );
 
     try {
-      // Making the GET request with Dio
+      // Making the POST request with Dio
       Response response = await dio.post(
         url,
-        queryParameters: queryParams,
+        data: bodyParams,
         options: options,
       );
 
       // Checking the response status
       if (response.statusCode == 200) {
-        // Handle successful response here
-        print('Response: ${response.data}');
+
+       /* print('Response: ${response.data}');
+        Map<String, dynamic> responseData = response.data;
+        print('Response1: $responseData');*/
+
+        print('Raw Response: ${response.data}');
+        final jsonData = jsonExtract.extractJsonObjectFromXml(response.data as String);
+        final userData = UserData.fromJson(jsonData);
+
+
+        /*Map<String, dynamic> responseData = response.data;
+        UserData userData = UserData.fromJson(responseData);*/
+        print('API_STATUS: ${userData.apiStatus.toString()}');
+        print('APPVERSION: ${userData.appVersion.toString()}');
       } else {
         // Handle unsuccessful response here
         print('Request failed with status: ${response.statusCode}');
