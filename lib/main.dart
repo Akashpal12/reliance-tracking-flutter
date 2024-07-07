@@ -23,28 +23,31 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Locale locale = const Locale('en', ''); // Default locale is English
-  late ThemeData _themeData;
-  late bool _isDarkMode;
-  late bool _syncWithSystem;
+  late ThemeData _themeData = AppThemes.lightTheme; // Initialize with a default value
+  late bool _isDarkMode = false; // Initialize with a default value
+  late bool _syncWithSystem = false; // Initialize with a default value
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _loadTheme();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   Future<void> _loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    bool syncWithSystem = prefs.getBool('syncWithSystem') ?? false;
+
     setState(() {
-      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
-      _syncWithSystem = prefs.getBool('syncWithSystem') ?? false;
+      _isDarkMode = isDarkMode;
+      _syncWithSystem = syncWithSystem;
       _themeData = _isDarkMode ? AppThemes.darkTheme : AppThemes.lightTheme;
     });
   }
@@ -72,7 +75,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangePlatformBrightness() {
     if (_syncWithSystem) {
       bool isDark =
-          WidgetsBinding.instance?.window.platformBrightness == Brightness.dark;
+          WidgetsBinding.instance.window.platformBrightness == Brightness.dark;
       _saveTheme(isDark);
     }
   }

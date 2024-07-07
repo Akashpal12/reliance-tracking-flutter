@@ -1,102 +1,126 @@
+final String UserTName = "user";
+
 class UserData {
-  final String apiStatus;
-  final int appVersion;
-  final String appUrl;
-  final String appStatus;
-  final List<User> userDetails;
+  String apiStatus;
+  int appversion;
+  String appurl;
+  String appstatus;
+  Userdetails userdetails;
 
   UserData({
     required this.apiStatus,
-    required this.appVersion,
-    required this.appUrl,
-    required this.appStatus,
-    required this.userDetails,
+    required this.appversion,
+    required this.appurl,
+    required this.appstatus,
+    required this.userdetails,
   });
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(
-      apiStatus: json['API_STATUS'],
-      appVersion: json['APPVERSION'],
-      appUrl: json['APPURL'],
-      appStatus: json['APPSTATUS'],
-      userDetails: List<User>.from(
-        json['USERDETAILS']['Table'].map((x) => User.fromJson(x)),
-      ),
-    );
-  }
+  factory UserData.fromJson(Map<String, dynamic> json) => UserData(
+        apiStatus: json["API_STATUS"],
+        appversion: json["APPVERSION"],
+        appurl: json["APPURL"],
+        appstatus: json["APPSTATUS"],
+        userdetails: Userdetails.fromJson(json["USERDETAILS"]),
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'API_STATUS': apiStatus,
-      'APPVERSION': appVersion,
-      'APPURL': appUrl,
-      'APPSTATUS': appStatus,
-      'USERDETAILS': {
-        'Table': userDetails.map((user) => user.toJson()).toList(),
-      },
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        "API_STATUS": apiStatus,
+        "APPVERSION": appversion,
+        "APPURL": appurl,
+        "APPSTATUS": appstatus,
+        "USERDETAILS": userdetails.toJson(),
+      };
 }
-class User {
-  final int utid;
-  final String utUserType;
-  final String userId;
-  final String name;
-  final String mobile;
-  final int factId;
-  final String fName;
-  final String fShort;
-  final bool gpsFlag;
-  final double timeFrom;
-  final double timeTo;
-  final int leaveFlag;
 
-  User({
+class Userdetails {
+  List<UserTable> table;
+
+  Userdetails({
+    required this.table,
+  });
+
+  factory Userdetails.fromJson(Map<String, dynamic> json) => Userdetails(
+        table: List<UserTable>.from(
+            json["Table"].map((x) => UserTable.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Table": List<dynamic>.from(table.map((x) => x.toJson())),
+      };
+}
+
+class UserTable {
+  int utid;
+  String utUsertype;
+  String userid;
+  String name;
+  String mobile;
+  int factid;
+  String fName;
+  String fShort;
+  bool gpsFlg;
+  double timefrom;
+  double timeto;
+  String leaveflg;
+
+  UserTable({
     required this.utid,
-    required this.utUserType,
-    required this.userId,
+    required this.utUsertype,
+    required this.userid,
     required this.name,
     required this.mobile,
-    required this.factId,
+    required this.factid,
     required this.fName,
     required this.fShort,
-    required this.gpsFlag,
-    required this.timeFrom,
-    required this.timeTo,
-    required this.leaveFlag,
+    required this.gpsFlg,
+    required this.timefrom,
+    required this.timeto,
+    required this.leaveflg,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      utid: json['UTID'],
-      utUserType: json['UT_USERTYPE'],
-      userId: json['USERID'],
-      name: json['NAME'],
-      mobile: json['MOBILE'],
-      factId: json['FACTID'],
-      fName: json['F_NAME'],
-      fShort: json['F_SHORT'],
-      gpsFlag: json['GPS_FLG'],
-      timeFrom: json['TIMEFROM'].toDouble(),
-      timeTo: json['TIMETO'].toDouble(),
-      leaveFlag: json['LEAVEFLG'],
-    );
-  }
+  factory UserTable.fromJson(Map<String, dynamic> json) => UserTable(
+        utid: json["UTID"],
+        utUsertype: json["UT_USERTYPE"],
+        userid: json["USERID"],
+        name: json["NAME"],
+        mobile: json["MOBILE"],
+        factid: json["FACTID"],
+        fName: json["F_NAME"],
+        fShort: json["F_SHORT"],
+        gpsFlg: json["GPS_FLG"],
+        timefrom: json["TIMEFROM"],
+        timeto: json["TIMETO"],
+        leaveflg: json["LEAVEFLG"],
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'UTID': utid,
-      'UT_USERTYPE': utUserType,
-      'USERID': userId,
-      'NAME': name,
-      'MOBILE': mobile,
-      'FACTID': factId,
-      'F_NAME': fName,
-      'F_SHORT': fShort,
-      'GPS_FLG': gpsFlag,
-      'TIMEFROM': timeFrom,
-      'TIMETO': timeTo,
-      'LEAVEFLG': leaveFlag,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        "UTID": utid,
+        "UT_USERTYPE": utUsertype,
+        "USERID": userid,
+        "NAME": name,
+        "MOBILE": mobile,
+        "FACTID": factid,
+        "F_NAME": fName,
+        "F_SHORT": fShort,
+        "GPS_FLG": gpsFlg,
+        "TIMEFROM": timefrom,
+        "TIMETO": timeto,
+        "LEAVEFLG": leaveflg,
+      };
+}
+
+class UserFields {
+  static final String Id = "id";
+  static final String UTID = "UTID";
+  static final String UT_USERTYPE = "UT_USERTYPE";
+  static final String USERID = "USERID";
+  static final String NAME = "NAME";
+  static final String MOBILE = "MOBILE";
+  static final String FACTID = "FACTID";
+  static final String F_NAME = "F_NAME";
+  static final String F_SHORT = "F_SHORT";
+  static final String GPS_FLG = "GPS_FLG";
+  static final String TIMEFROM = "TIMEFROM";
+  static final String TIMETO = "TIMETO";
+  static final String LEAVEFLG = "LEAVEFLG";
 }

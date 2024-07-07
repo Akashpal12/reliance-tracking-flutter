@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:reliance_sugar_tracking/utils/other/jsonExtract.dart';
-
+import '../../db/DBProvider.dart';
+import '../../db/dbHelper.dart';
 import '../../model/response/UserData.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,8 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late Directory caneDevelopmentDir;
-
   @override
   void initState() {
     super.initState();
@@ -27,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     String url = 'http://reltrack.vibsugar.com/api/WebAPI/GPS_ValidateIMEI';
 
     // Constructing the body parameters
-    String imei = '6a37b2a4efd8d308';  // Replace with dynamic value if needed
+    String imei = '6a37b2a4efd8d308'; // Replace with dynamic value if needed
     Map<String, dynamic> bodyParams = {
       'IMEI': imei,
     };
@@ -49,20 +47,31 @@ class _SplashScreenState extends State<SplashScreen> {
 
       // Checking the response status
       if (response.statusCode == 200) {
+        //log('data: ${response.data}');
+        //log('data: ${response.data}');
+        String jsonString = jsonEncode(response.data);
+        print('Json Res :$jsonString');
+        UserData userData = UserData.fromJson(response.data);
 
-       /* print('Response: ${response.data}');
-        Map<String, dynamic> responseData = response.data;
-        print('Response1: $responseData');*/
+        // Print the extracted values
+        print('API_STATUS: ${userData.apiStatus}');
+        print('APPVERSION: ${userData.appversion}');
+        print('APPURL: ${userData.appurl}');
+        print('APPSTATUS: ${userData.apiStatus}');
+        List<UserTable> userList=userData.userdetails.table;
+        print(userList[0].name);
 
-        print('Raw Response: ${response.data}');
-        final jsonData = jsonExtract.extractJsonObjectFromXml(response.data as String);
-        final userData = UserData.fromJson(jsonData);
+        await DBProvider.initialize(); // Initialize the database
+        await DBProvider.db.deleteUserTable();
+        // Insert each user into the database
+        for (UserTable user in userList) {
+          await DBProvider.db.createUser(user);
+        }
 
+        print('Successfully Inserted');
+        List<UserTable> list = await DBProvider.db.getAllUsers();
+        print(list.length);
 
-        /*Map<String, dynamic> responseData = response.data;
-        UserData userData = UserData.fromJson(responseData);*/
-        print('API_STATUS: ${userData.apiStatus.toString()}');
-        print('APPVERSION: ${userData.appVersion.toString()}');
       } else {
         // Handle unsuccessful response here
         print('Request failed with status: ${response.statusCode}');
@@ -131,4 +140,5 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+
 }
