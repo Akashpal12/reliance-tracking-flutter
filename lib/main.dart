@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:reliance_sugar_tracking/utils/lang/appLocalizations.dart';
 import 'package:reliance_sugar_tracking/utils/themes/theme.dart';
 import 'package:reliance_sugar_tracking/utils/testing/home_screen.dart';
+import 'package:reliance_sugar_tracking/view/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ? deviceLocale
             : supportedLocales.first;
       },
-      home: HomeScreen(
+      /*home: HomeScreen(
         onThemeChanged: _toggleTheme,
         syncWithSystem: _syncWithSystem,
         onSyncChanged: (value) {
@@ -111,7 +112,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             _syncWithSystem = value;
           });
         },
-      ),
+      ),*/
+      home: SplashScreen(),
     );
   }
 }
