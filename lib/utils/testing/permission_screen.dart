@@ -28,7 +28,6 @@ class _PermissionState extends State<PermissionScreen> {
 
   Future<void> _requestPermission() async {
     var status = await Permission.location.request();
-
     if (status.isGranted) {
       print('Location Permission Granted');
       _showSnackBar('Location Permission Granted');

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:reliance_sugar_tracking/view/screens/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -8,6 +10,18 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Set a timer to navigate to the next screen after 3 seconds
+    Timer(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,39 +39,27 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 40.0),
+                  SizedBox(height: 70.0),
                   CircleAvatar(
                     backgroundColor: Colors.white,
                     radius: 100.0,
                     child: Image.asset(
-                      'assets/images/wavelogo.png',
+                      'assets/images/reliance_logo.png',
                       height: 130,
                       width: 130,
                     ),
                   ),
                   SizedBox(height: 20.0),
                   Text(
-                    "WAVE INDUSTRIES LIMITED",
+                    "RELIANCE SUGAR TRACKING",
                     style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
+                      fontSize: 16.0,
                       fontFamily: 'calibri',
                     ),
                   ),
                   SizedBox(height: 40.0),
-                  CircularProgressIndicator(),
-                  SizedBox(height: 40.0),
-                  Text(
-                    "Checking Permissions...",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                      color: Colors.black,
-                      fontFamily: 'calibri',
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
                 ],
               ),
             ),
@@ -67,3 +69,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
+
+
