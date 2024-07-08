@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:reliance_sugar_tracking/utils/lang/appLocalizations.dart';
 import 'package:reliance_sugar_tracking/utils/themes/theme.dart';
-import 'package:reliance_sugar_tracking/view/screens/home_screen.dart';
+import 'package:reliance_sugar_tracking/utils/testing/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:reliance_sugar_tracking/view/screens/splash_screen.dart';
-
+import 'package:reliance_sugar_tracking/utils/testing/permission_screen.dart';
+import 'package:reliance_sugar_tracking/utils/testing/splash_screen.dart';
 import '../../main.dart';
-import '../../utils/lang/appLocalizations.dart';
-import '../../utils/testing/test.dart';
+import '../lang/appLocalizations.dart';
+import 'test.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback onThemeChanged;
@@ -88,7 +88,8 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 //MaterialPageRoute(builder: (context) => TestScreen()),
-                MaterialPageRoute(builder: (context) => SplashScreen()),
+                //MaterialPageRoute(builder: (context) => SplashScreen()),
+                MaterialPageRoute(builder: (context) => PermissionScreen()),
               );
             },
             child: Text('Go to Test Screen'),

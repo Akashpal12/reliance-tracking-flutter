@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../db/DBProvider.dart';
-import '../../db/dbHelper.dart';
 import '../../model/response/UserData.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -70,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
         print('Successfully Inserted');
         List<UserTable> list = await DBProvider.db.getAllUsers();
-        print(list.length);
+        print(list[0].fName);
 
       } else {
         // Handle unsuccessful response here

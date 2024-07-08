@@ -50,17 +50,17 @@ class Userdetails {
 }
 
 class UserTable {
-  int utid;
+  String utid;
   String utUsertype;
   String userid;
   String name;
   String mobile;
-  int factid;
+  String factid;
   String fName;
   String fShort;
-  bool gpsFlg;
-  double timefrom;
-  double timeto;
+  String gpsFlg;
+  String timefrom;
+  String timeto;
   String leaveflg;
 
   UserTable({
@@ -79,17 +79,17 @@ class UserTable {
   });
 
   factory UserTable.fromJson(Map<String, dynamic> json) => UserTable(
-        utid: json["UTID"],
+        utid: json["UTID"].toString(), // It is In Int
         utUsertype: json["UT_USERTYPE"],
         userid: json["USERID"],
         name: json["NAME"],
         mobile: json["MOBILE"],
-        factid: json["FACTID"],
+        factid: json["FACTID"].toString(), // It is In Int
         fName: json["F_NAME"],
         fShort: json["F_SHORT"],
-        gpsFlg: json["GPS_FLG"],
-        timefrom: json["TIMEFROM"],
-        timeto: json["TIMETO"],
+        gpsFlg: json["GPS_FLG"].toString(),   // It is In Bool
+        timefrom: json["TIMEFROM"].toString(),  // It is In double
+        timeto: json["TIMETO"].toString(),  // It is In double
         leaveflg: json["LEAVEFLG"],
       );
 
