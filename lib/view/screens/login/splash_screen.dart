@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:reliance_sugar_tracking/view/screens/login_screen.dart';
+import 'package:reliance_sugar_tracking/view/screens/login/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
