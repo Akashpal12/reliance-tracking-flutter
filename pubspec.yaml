@@ -41,6 +41,7 @@ dependencies:
   dio: ^5.4.1
   sqflite: ^2.3.2
   permission_handler: ^11.3.0
+  pin_code_fields: ^7.3.0
 
 
 dev_dependencies:
