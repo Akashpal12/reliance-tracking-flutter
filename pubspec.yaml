@@ -39,9 +39,11 @@ dependencies:
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.2.3
   dio: ^5.4.1
+  http: ^1.2.2
   sqflite: ^2.3.2
-  permission_handler: ^11.3.0
-  pin_code_fields: ^7.3.0
+  permission_handler: ^11.3.1
+  device_info_plus: ^11.0.0
+  connectivity_plus: ^6.0.5
 
 
 dev_dependencies:

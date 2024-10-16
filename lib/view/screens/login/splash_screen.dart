@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:reliance_sugar_tracking/view/screens/login/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,16 +14,69 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final DeviceInfoPlugin _deviceInfo =
+      DeviceInfoPlugin(); // DeviceInfoPlugin instance
   @override
   void initState() {
     super.initState();
-    // Set a timer to navigate to the next screen after 3 seconds
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
-    });
+    _checkPermissions(); // Check permissions on initialization
+  }
+
+  Future<void> _checkPermissions() async {
+    // Request location and storage permissions
+    final sdkInt = await _getAndroidVersion();
+    print("Sdk Version : $sdkInt");
+    var locationStatus;var storageStatus;
+    if (sdkInt >= 33) {
+      locationStatus = await Permission.location.request();
+      storageStatus = await Permission.manageExternalStorage.request();
+    } else {
+      locationStatus = await Permission.location.request();
+      storageStatus = await Permission.storage.request();
+    }
+    print("locationStatus : $locationStatus");
+    print("storageStatus : $storageStatus");
+    // Check if both permissions are granted
+    if (locationStatus.isGranted && storageStatus.isGranted ) {
+      Timer(Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      });
+    } else {
+      // Handle the case where permissions are not granted
+      _showPermissionErrorDialog();
+    }
+  }
+
+  Future<int> _getAndroidVersion() async {
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
+      return androidInfo.version.sdkInt; // Return the SDK version
+    }
+    return 0; // Return 0 if not Android
+  }
+
+  void _showPermissionErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Permissions Required"),
+          content: Text(
+              "Please grant location and storage permissions to continue."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -69,6 +126,3 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-
-
-

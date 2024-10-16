@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'colours.dart';
 
 class AppThemes {
@@ -11,6 +10,13 @@ class AppThemes {
     // Define other light theme properties here
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: AppColors.lightTextColor),
+      labelLarge: TextStyle(color: AppColors.lightButtonTextColor), // Button text style
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: AppColors.lightButtonTextColor, // Text color for buttons
+        backgroundColor: AppColors.primaryColor, // Background color for buttons
+      ),
     ),
   );
 
@@ -22,6 +28,13 @@ class AppThemes {
     // Define other dark theme properties here
     textTheme: TextTheme(
       bodyLarge: TextStyle(color: AppColors.darkTextColor),
+      labelLarge: TextStyle(color: AppColors.darkButtonTextColor), // Button text style
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: AppColors.darkButtonTextColor, // Text color for buttons
+        backgroundColor: AppColors.primaryColor, // Background color for buttons
+      ),
     ),
   );
 }
