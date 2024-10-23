@@ -1,5 +1,5 @@
 import 'package:path/path.dart';
-import 'package:reliance_sugar_tracking/model/response/login_response.dart';
+import 'package:reliance_sugar_tracking/utils/testing/UserData.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
@@ -14,25 +14,27 @@ class DBProvider {
 
   static Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, "/storage/emulated/0/akash_dev/reliance.db"); // Updated to use the proper path
+    final path = join(dbPath, "/storage/emulated/0/akash_dev/reliance.db");
 
-    return await openDatabase(path, version: 1, onOpen: (db) {}, onCreate: (Database db, int version) async {
+    return await openDatabase(path, version: 1, onOpen: (db) {},
+        onCreate: (Database db, int version) async {
       await db.execute('''
-      CREATE TABLE IF NOT EXISTS user (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        UTID INTEGER,
-        UT_USERTYPE TEXT,
-        USERID TEXT,
-        NAME TEXT,
-        MOBILE TEXT,
-        FACTID TEXT,  
-        F_NAME TEXT,
-        F_SHORT TEXT,
-        TIMEFROM REAL,
-        TIMETO REAL,
-        LEAVEFLG TEXT
-      )
-    ''');
+  CREATE TABLE IF NOT EXISTS user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    UTID INTEGER,
+    UT_USERTYPE TEXT,
+    USERID TEXT,
+    NAME TEXT,
+    MOBILE TEXT,
+    FACTID INTEGER,
+    F_NAME TEXT,
+    F_SHORT TEXT,
+    GPS_FLG TEXT,
+    TIMEFROM TEXT,
+    TIMETO TEXT,
+    LEAVEFLG TEXT
+  )
+  ''');
     });
   }
 
@@ -41,7 +43,7 @@ class DBProvider {
     return _database;
   }
 
-  Future<void> createUser(UserDetail newUser) async {
+  createUser(UserTable newUser) async {
     final db = await database;
     try {
       await db.insert('user', newUser.toJson(),
@@ -51,12 +53,16 @@ class DBProvider {
     }
   }
 
-  Future<List<UserDetail>> getAllUsers() async {
+  Future<int> deleteUser(int uCode) async {
+    final db = database;
+    return await db.delete('user', where: 'uCode = ?', whereArgs: [uCode]);
+  }
+
+  Future<List<UserTable>> getAllUsers() async {
     final db = database;
     final res = await db.query('user');
-    List<UserDetail> list = res.isNotEmpty
-        ? res.map((c) => UserDetail.fromJson(c)).toList()
-        : [];
+    List<UserTable> list =
+        res.isNotEmpty ? res.map((c) => UserTable.fromJson(c)).toList() : [];
     return list;
   }
 

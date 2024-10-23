@@ -3,126 +3,133 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:reliance_sugar_tracking/view/screens/login/login_screen.dart';
+
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final DeviceInfoPlugin _deviceInfo =
-      DeviceInfoPlugin(); // DeviceInfoPlugin instance
+  bool _permissionGranted = false;
+  late Directory caneDevelopmentDir;
+
   @override
   void initState() {
     super.initState();
-    _checkPermissions(); // Check permissions on initialization
+    _checkPermissions();
   }
 
   Future<void> _checkPermissions() async {
-    // Request location and storage permissions
-    final sdkInt = await _getAndroidVersion();
-    print("Sdk Version : $sdkInt");
-    var locationStatus;var storageStatus;
-    if (sdkInt >= 33) {
-      locationStatus = await Permission.location.request();
-      storageStatus = await Permission.manageExternalStorage.request();
-    } else {
-      locationStatus = await Permission.location.request();
-      storageStatus = await Permission.storage.request();
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+    if (androidInfo.version.sdkInt >= 33) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.photos,
+        Permission.videos,
+        Permission.audio,
+        Permission.manageExternalStorage,
+      ].request();
+
+      if (statuses.values.every((status) => status.isGranted)) {
+        _permissionGranted = true;
+      } else if (statuses.values.any((status) => status.isPermanentlyDenied)) {
+        openAppSettings();
+      }
     }
-    print("locationStatus : $locationStatus");
-    print("storageStatus : $storageStatus");
-    // Check if both permissions are granted
-    if (locationStatus.isGranted && storageStatus.isGranted ) {
-      Timer(Duration(seconds: 2), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
-      });
+    else if (androidInfo.version.sdkInt == 32 || androidInfo.version.sdkInt == 31) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.storage,
+        Permission.manageExternalStorage,
+      ].request();
+
+      if (statuses.values.every((status) => status.isGranted)) {
+        _permissionGranted = true;
+      } else if (statuses.values.any((status) => status.isPermanentlyDenied)) {
+        openAppSettings();
+      }
     } else {
-      // Handle the case where permissions are not granted
-      _showPermissionErrorDialog();
+      PermissionStatus status = await Permission.storage.request();
+      if (status.isGranted) {
+        _permissionGranted = true;
+      } else if (status.isPermanentlyDenied) {
+        openAppSettings();
+      }
+    }
+    if (_permissionGranted) {
+      await createDirectories();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Storage permission is required to proceed.')));
     }
   }
 
-  Future<int> _getAndroidVersion() async {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await _deviceInfo.androidInfo;
-      return androidInfo.version.sdkInt; // Return the SDK version
-    }
-    return 0; // Return 0 if not Android
-  }
 
-  void _showPermissionErrorDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Permissions Required"),
-          content: Text(
-              "Please grant location and storage permissions to continue."),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-          ],
+  Future<void> createDirectories() async {
+    try {
+      Directory internalDir = Directory('/storage/emulated/0');
+      if (await internalDir.exists()) {
+        String internalPath = internalDir.path;
+        caneDevelopmentDir = Directory('$internalPath/akash_dev');
+        if (!(await caneDevelopmentDir.exists())) {
+          await caneDevelopmentDir.create(recursive: true);
+          debugPrint('Directory created: ${caneDevelopmentDir.path}');
+        } else {
+          debugPrint('Directory already exists: ${caneDevelopmentDir.path}');
+        }
+      } else {
+        debugPrint('Error: Internal storage not detected at ${internalDir.path}');
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Internal storage not detected. Please check your device settings.'))
         );
-      },
-    );
+      }
+      _navigateToHome();
+    } catch (e) {
+      debugPrint('Error creating directories: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error creating directories: $e'))
+      );
+    }
+  }
+  void _navigateToHome() {
+    Timer(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) =>  LoginScreen()));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height,
-              child: Image.asset(
-                'assets/images/login_bg.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 70.0),
-                  CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 100.0,
-                    child: Image.asset(
-                      'assets/images/reliance_logo.png',
-                      height: 130,
-                      width: 130,
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Text(
-                    "RELIANCE SUGAR TRACKING",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                      fontFamily: 'calibri',
-                    ),
-                  ),
-                  SizedBox(height: 40.0),
-                ],
-              ),
-            ),
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CircularProgressIndicator(), // Loading indicator
+            SizedBox(height: 20),
+            Text("Checking permissions...", style: TextStyle(fontSize: 16)),
           ],
         ),
       ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home Screen')),
+      body: const Center(child: Text('Welcome to Home!')),
     );
   }
 }

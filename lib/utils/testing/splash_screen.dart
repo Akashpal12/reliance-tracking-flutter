@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../db/DBProvider.dart';
-import '../../model/response/UserData.dart';
+import 'DBProvider.dart';
+import 'UserData.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

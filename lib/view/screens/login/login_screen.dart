@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // Import http package
 
+import '../../../db/DBProvider.dart';
+import '../../../model/response/login_response.dart';
+import '../../../utils/testing/UserData.dart';
 import '../../../utils/connectivity/deviceInfo.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true; // Start loading
       });
-      String apiUrl = "http://reltrack.vibsugar.com/api/WebAPI/GPS_CheckOTP"; // Replace with your actual API URL
+      String apiUrl =
+          "http://reltrack.vibsugar.com/api/WebAPI/GPS_CheckOTP"; // Replace with your actual API URL
       try {
         final response = await http.post(
           Uri.parse(apiUrl),
@@ -54,7 +58,19 @@ class _LoginScreenState extends State<LoginScreen> {
         if (response.statusCode == 200) {
           print('Response data: ${response.body}');
           Map<String, dynamic> jsonResponse = json.decode(response.body);
+          ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
+          print('API_STATUS: ${apiResponse.apiStatus}');
+          List<UserDetail> userList=apiResponse.userDetails.table;
+          print(userList[0].name);
+          await DBProvider.initialize(); // Initialize the database
+          await DBProvider.db.deleteUserTable();
+          // Insert each user into the database
+          for (UserDetail user in userList) {
+            await DBProvider.db.createUser(user);
+          }
+          print('Successfully Inserted');
           if (jsonResponse["API_STATUS"] == "OK") {
+
           } else {
             showAlertDialog(jsonResponse["DATA"]);
           }
